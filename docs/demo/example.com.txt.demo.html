@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DNS zone report - example.com</title>
+<style>
+:root { --bg:#ffffff; --fg:#1f2328; --muted:#59636e; --border:#d1d9e0; --head:#f6f8fa; --code:#eff1f3;
+        --stripe:#fafbfc; --hover:#fff8c5; --accent:#0969da; --red:#d1242f; --orange:#bc4c00; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#0d1117; --fg:#e6edf3; --muted:#9198a1; --border:#3d444d; --head:#151b23; --code:#262c36;
+          --stripe:#11161d; --hover:#3a3214; --accent:#4493f8; --red:#ff7b72; --orange:#f0883e; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg);
+       font:14px/1.5 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+main { padding: 16px 24px 48px; max-width: 100%; }
+h1 { font-size: 26px; margin: 8px 0 16px; }
+h2 { font-size: 20px; margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 16px; margin: 20px 0 8px; }
+a { color: var(--accent); }
+code { background: var(--code); padding: 1px 5px; border-radius: 4px; font-size: 12.5px;
+       font-family: ui-monospace, "Cascadia Code", Consolas, monospace; overflow-wrap: anywhere; }
+td code { white-space: nowrap; overflow-wrap: normal; }
+.wide td:nth-last-child(2) code { white-space: normal; overflow-wrap: anywhere; }
+thead tr:has(th:empty:first-child) { display: none; }
+.tw:first-of-type td:first-child { white-space: nowrap; width: 1%; }
+blockquote { margin: 12px 0; padding: 8px 14px; border-left: 4px solid var(--accent); color: var(--muted);
+             background: var(--head); border-radius: 0 6px 6px 0; }
+blockquote p { margin: 0; }
+.tw { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; margin: 8px 0 16px; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; text-align: left; }
+th { background: var(--head); white-space: nowrap; }
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--accent); }
+th .arrow { display: inline-block; width: 1em; margin-left: 4px; color: var(--muted); font-size: 11px; }
+th.sorted .arrow { color: var(--accent); }
+tr.filters th { padding: 4px 6px; font-weight: normal; }
+tr.filters input { width: 100%; min-width: 60px; padding: 3px 6px; font-size: 12px; border: 1px solid var(--border);
+                   border-radius: 4px; background: var(--bg); color: var(--fg); }
+tr.filters input.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.tw-meta { display: flex; justify-content: space-between; align-items: center; color: var(--muted);
+           font-size: 12px; padding: 4px 10px; border-top: 1px solid var(--border); background: var(--head); }
+.tw-meta button, .toolbar button { font-size: 12px; padding: 2px 10px; border: 1px solid var(--border); border-radius: 4px;
+           background: var(--bg); color: var(--fg); cursor: pointer; }
+tbody tr:nth-child(even) { background: var(--stripe); }
+tbody tr:hover { background: var(--hover); }
+td { min-width: 70px; }
+td:last-child, td:nth-last-child(2) { min-width: 140px; }
+.wide td:nth-last-child(2) { min-width: 380px; }
+/* grouped (stacked) cells for the wide tables */
+.grouped td { min-width: 0; }
+.grouped td code { white-space: normal; overflow-wrap: anywhere; }
+.grouped td:first-child { min-width: 230px; max-width: 300px; }
+.grouped td:nth-child(2) { min-width: 200px; }
+.grouped td:nth-child(2) { max-width: 260px; }
+.grouped td .main { line-height: 1.45; }
+.grouped td .sub { margin-top: 3px; font-size: 12px; line-height: 1.4; }
+.grouped .part + .part { margin-left: 10px; }
+.grouped .lab { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-right: 4px; }
+.grouped td:nth-last-child(2) { min-width: 0; }
+.wide.grouped td:nth-last-child(2) { min-width: 300px; }
+.subsorts { font-weight: normal; font-size: 11px; margin-top: 2px; }
+.subsort { cursor: pointer; color: var(--muted); margin-right: 8px; white-space: nowrap; }
+.subsort:hover, .subsort.sorted, .subsort.sorted .arrow { color: var(--accent); }
+.subsort .arrow { margin-left: 1px; width: auto; }
+details.more { display: inline; }
+details.more > summary { display: inline; cursor: pointer; color: var(--accent); font-weight: 600; list-style: none;
+                         margin-left: 4px; white-space: nowrap; }
+details.more > summary::-webkit-details-marker { display: none; }
+details.more > summary:hover { text-decoration: underline; }
+details.more[open] > summary { display: block; margin: 2px 0; }
+details.more[open] > summary::after { content: " (show less)"; font-weight: normal; }
+span[style*="color:red"] { color: var(--red) !important; }
+span[style*="color:darkorange"] { color: var(--orange) !important; }
+.toolbar { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 10px 0;
+           border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.toolbar input { flex: 1 1 260px; max-width: 420px; padding: 6px 10px; border: 1px solid var(--border);
+                 border-radius: 6px; background: var(--bg); color: var(--fg); font-size: 14px; }
+.toolbar nav a { margin-right: 10px; font-size: 13px; text-decoration: none; }
+.toolbar .count { color: var(--muted); font-size: 12px; }
+ul { padding-left: 22px; }
+li { margin: 2px 0; }
+hr { border: 0; border-top: 1px solid var(--border); margin: 32px 0 16px; }
+@media (max-width: 1500px) {
+  .grouped td:first-child { min-width: 170px; } .grouped td:nth-child(2) { min-width: 150px; }
+  .wide.grouped td:nth-last-child(2) { min-width: 220px; } .grouped th, .grouped td { padding: 6px 7px; }
+}
+@media (max-width: 700px) { main { padding: 12px 16px 40px; } h1 { font-size: 21px; } }
+</style>
+</head>
+<body>
+<main>
+<div class="toolbar">
+  <input id="filter" type="search" placeholder="Filter all tables (name, IP, provider, 'Likely' …; !text excludes)">
+  <span id="count" class="count"></span>
+  <nav><a href="#summary">Summary</a> <a href="#action-items">Action items</a> <a href="#web-records-a-aaaa-cname">Web records (A / AAAA / CNAME)</a> <a href="#ip-address-details">IP address details</a> <a href="#certificate-validation-service-records-underscore-cnames">Certificate validation &amp; service records (underscore CNAMEs)</a> <a href="#txt-records">TXT records</a> <a href="#mail-mx">Mail (MX)</a> <a href="#delegation-ns-soa">Delegation (NS / SOA)</a></nav>
+</div>
+<h1>DNS zone report - example.com</h1>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Domain expiry</strong></td>
+<td>🟠 <span style="color:darkorange"><strong>2026-12-25 (79 days left)</strong></span></td>
+</tr>
+<tr>
+<td>Registrar</td>
+<td>Example Registrar, Inc.</td>
+</tr>
+<tr>
+<td>Registered</td>
+<td>2015-01-15</td>
+</tr>
+<tr>
+<td>Registry status</td>
+<td>client transfer prohibited</td>
+</tr>
+<tr>
+<td>DNSSEC</td>
+<td>not signed</td>
+</tr>
+<tr>
+<td>Nameservers (registry)</td>
+<td>ns1.dns-provider.example, ns2.dns-provider.example</td>
+</tr>
+<tr>
+<td>Nameservers (live)</td>
+<td>ns1.dns-provider.example, ns2.dns-provider.example</td>
+</tr>
+<tr>
+<td>Zone file</td>
+<td><code>example.com.txt</code> (exported 2026-10-06 08:55:00)</td>
+</tr>
+<tr>
+<td>Records</td>
+<td>28</td>
+</tr>
+<tr>
+<td>Scan time (UTC)</td>
+<td>2026-10-06 09:00:00 → 09:01:30</td>
+</tr>
+<tr>
+<td>Registry data source</td>
+<td>synthetic demo data</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p>ℹ️ The scanner host has no IPv6 connectivity: the zone's IPv6 addresses and AAAA names were tested remotely through globalping.io probes (ping + HTTP/HTTPS over IPv6), marked <em>(remote)</em>.</p>
+</blockquote>
+<h2 id="summary">Summary</h2>
+<p>Records by type: <strong>SOA</strong> 1, <strong>NS</strong> 2, <strong>A</strong> 8, <strong>AAAA</strong> 1, <strong>CNAME</strong> 7, <strong>MX</strong> 1, <strong>TXT</strong> 8</p>
+<ul>
+<li>🔴 critical findings: <strong>1</strong>  ·  🟠 warnings: <strong>6</strong></li>
+<li>Removable: 🗑️ Yes <strong>3</strong>  ·  🗑️ Likely <strong>2</strong>  ·  🔍 Review <strong>5</strong></li>
+</ul>
+<h2 id="action-items">Action items</h2>
+<h3>🔴 Security (dangling records / takeover risk)</h3>
+<ul>
+<li><code>docs</code> CNAME -&gt; <code>missing-docs-site.herokuapp.com</code> is dangling (NXDOMAIN) - delete</li>
+</ul>
+<h3>🗑️ Delete candidates</h3>
+<ul>
+<li><code>legacy-vm</code> - ping only, no web service, name says <code>legacy</code></li>
+<li><code>old-test-todelete</code> (A 203.0.113.99) - nothing answering, name says <code>todelete, delete, test, old</code></li>
+<li><code>ftp</code> - legacy default record, FTP (21) closed</li>
+</ul>
+<h3>🧹 Cleanup (stale verification / validation records)</h3>
+<ul>
+<li><code>@</code> TXT GlobalSign verification token(s) - one-time CA validation, removable</li>
+<li><code>@</code> has 2 google-site-verification tokens - prune unused (check Search Console / Google Admin)</li>
+<li>1 AWS PrivateLink <code>vpce:</code> TXT tokens - keep only those matching a current endpoint service</li>
+</ul>
+<h3>✉️ Mail authentication</h3>
+<ul>
+<li>No DKIM selector records in the zone (may live elsewhere if signing via a provider default)</li>
+</ul>
+<h3>🔍 Needs owner review</h3>
+<ul>
+<li><code>staging</code> - ports open but HTTP/HTTPS broken (TLS error)</li>
+<li><code>@</code> TXT <code>a1b2c3d4e5</code> - unidentified token, find owner or remove</li>
+</ul>
+<h3>ℹ️ Informational</h3>
+<ul>
+<li><code>api</code> managed certificate (Google Trust Services) expires in 44 days - auto-renewal expected</li>
+<li><code>app</code> certificate (GoDaddy.com, Inc.) expires in 74 days - plan renewal</li>
+<li>Domain registration expires 2026-12-25 (79 days) - renewal due soon</li>
+<li>DNSSEC not enabled at the registry</li>
+</ul>
+<h2 id="web-records-a-aaaa-cname">Web records (A / AAAA / CNAME)</h2>
+<p>ICMP = ping replies / IPs tested · HTTP/HTTPS = status of <code>GET /</code> (no redirects followed) · Cert = certificate served on 443 with SNI = the record name.</p>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Zone value</th>
+<th>Resolves to (live)</th>
+<th>ICMP</th>
+<th>HTTP</th>
+<th>HTTPS</th>
+<th>ASN</th>
+<th>Cloud</th>
+<th>Reverse DNS</th>
+<th>Certificate issuer</th>
+<th>Cert expiry</th>
+<th>Insights / action</th>
+<th>Removable?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@</code></td>
+<td>A</td>
+<td><code>192.0.2.10</code></td>
+<td><code>192.0.2.10</code></td>
+<td>✅ 1/1</td>
+<td>301 → https://www.example.com/</td>
+<td>301 → https://www.example.com/</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td><code>10.2.0.192.bc.googleusercontent.com</code></td>
+<td><span style="color:#1E64D4"><strong>Google Trust Services (Google)</strong></span></td>
+<td>2027-03-01 (145d)</td>
+<td>✅ Active</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>*.preview</code></td>
+<td>A</td>
+<td><code>198.51.100.40</code></td>
+<td><code>198.51.100.40</code></td>
+<td>✅ 1/1</td>
+<td>301</td>
+<td>404 (nginx)</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td><code>40.100.51.198.bc.googleusercontent.com</code></td>
+<td><span style="color:#1E64D4"><strong>Google Trust Services (Google)</strong></span></td>
+<td>2026-12-28 (82d)</td>
+<td>🔵 Wildcard - probed with random name <code>zscan-probe-1a2b3c.preview.example.com</code><br>🔵 Non-production name (<code>preview</code>)<br>🔵 HTTPS answers 404 at <code>/</code> - API-only, or LB with no matching route<br>🔵 Certificate expires in 82 days - managed/ACME issuer, auto-renewal expected</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td>A</td>
+<td><code>198.51.100.20</code></td>
+<td><code>198.51.100.20</code></td>
+<td>✅ 1/1</td>
+<td>301 → https://api.example.com/</td>
+<td>404</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (us-central1)</strong></span></td>
+<td><code>20.100.51.198.bc.googleusercontent.com</code></td>
+<td><span style="color:#1E64D4"><strong>Google Trust Services (Google)</strong></span></td>
+<td>🔴 <span style="color:red"><strong>2026-11-20 (44d)</strong></span></td>
+<td>🔵 HTTPS answers 404 at <code>/</code> - API-only, or LB with no matching route<br>🔵 Certificate expires in 44 days - managed/ACME issuer, normally auto-renews ~30 days before expiry (re-check if still unrenewed in 2 weeks)</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>app</code></td>
+<td>A</td>
+<td><code>198.51.100.30</code></td>
+<td><code>198.51.100.30</code></td>
+<td>✅ 1/1</td>
+<td>301 → https://app.example.com/</td>
+<td>200 (nginx)</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (europe-west1)</strong></span></td>
+<td><code>30.100.51.198.bc.googleusercontent.com</code></td>
+<td>GoDaddy.com, Inc. (GoDaddy)</td>
+<td>🟠 <span style="color:darkorange"><strong>2026-12-20 (74d)</strong></span></td>
+<td>🔵 Certificate expires in 74 days - plan the renewal</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>legacy-vm</code></td>
+<td>A</td>
+<td><code>203.0.113.50</code></td>
+<td><code>203.0.113.50</code></td>
+<td>✅ 1/1</td>
+<td>❌ connect timeout</td>
+<td>❌ connect timeout</td>
+<td>AS64500 EXAMPLE-HOSTING - Example Hos…</td>
+<td>not cloud</td>
+<td><code>vm50.hosting.example</code></td>
+<td>none (timeout)</td>
+<td></td>
+<td>🟠 Answers ICMP only - nothing on TCP 80/443 (non-web service, or idle VM)</td>
+<td>🗑️ Likely</td>
+</tr>
+<tr>
+<td><code>old-test-todelete</code></td>
+<td>A</td>
+<td><code>203.0.113.99</code></td>
+<td><code>203.0.113.99</code></td>
+<td>❌ 0/1</td>
+<td>❌ connect timeout</td>
+<td>❌ connect timeout</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (us-central1)</strong></span></td>
+<td></td>
+<td>none (timeout)</td>
+<td></td>
+<td>🟠 <strong>Nothing answers</strong> (no ICMP, no TCP 80/443, no HTTP/HTTPS) - candidate for deletion; name contains <code>todelete, delete, test, old</code></td>
+<td>🗑️ Yes</td>
+</tr>
+<tr>
+<td><code>staging</code></td>
+<td>A</td>
+<td><code>203.0.113.60</code></td>
+<td><code>203.0.113.60</code></td>
+<td>✅ 1/1</td>
+<td>❌ connection error</td>
+<td>❌ TLS error</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (us-east1)</strong></span></td>
+<td><code>60.113.0.203.bc.googleusercontent.com</code></td>
+<td>none (SSLEOFError)</td>
+<td></td>
+<td>🟠 TCP 80/443 open but HTTP/HTTPS fails (connection error / TLS error) - LB/frontend without a working backend, or no certificate for this name<br>🔵 Non-production name (<code>staging</code>)</td>
+<td>🔍 Review</td>
+</tr>
+<tr>
+<td><code>www</code></td>
+<td>A</td>
+<td><code>192.0.2.10</code></td>
+<td><code>192.0.2.10</code></td>
+<td>✅ 1/1</td>
+<td>301 → https://www.example.com/</td>
+<td>200 (Google Frontend)</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td><code>10.2.0.192.bc.googleusercontent.com</code></td>
+<td><span style="color:#1E64D4"><strong>Google Trust Services (Google)</strong></span></td>
+<td>2027-03-01 (145d)</td>
+<td>✅ Active</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>api</code></td>
+<td>AAAA</td>
+<td><code>2001:db8:10::20</code></td>
+<td><code>2001:db8:10::20</code></td>
+<td>✅ 1/1 (remote)</td>
+<td>301 → https://api.example.com/ (IPv6, remote)</td>
+<td>404 (IPv6, remote)</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td></td>
+<td><span style="color:#1E64D4"><strong>Google Trust Services (Google)</strong></span></td>
+<td>🔴 <span style="color:red"><strong>2026-11-20 (44d)</strong></span></td>
+<td>🔵 IPv6 tested remotely via Globalping probes (Frankfurt DE (Example Net), Singapore SG (Example Net)) - ping and HTTP/HTTPS over IPv6; certificate shown is from the IPv4 path<br>🔵 HTTPS answers 404 at <code>/</code> - API-only, or LB with no matching route<br>🔵 Certificate expires in 44 days - managed/ACME issuer, normally auto-renews ~30 days before expiry (re-check if still unrenewed in 2 weeks)</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>cdn</code><br><em>AWS CloudFront distribution</em></td>
+<td>CNAME</td>
+<td><code>d111111abcdef8.cloudfront.net</code></td>
+<td><code>192.0.2.101</code><br><code>192.0.2.102</code></td>
+<td>✅ 2/2</td>
+<td>301 → https://cdn.example.com/ (CloudFront)</td>
+<td>200 (AmazonS3)</td>
+<td>AS16509 AMAZON-02 - Amazon.com, Inc.,…</td>
+<td>☁️ <span style="color:#FB54FF"><strong>AWS - CLOUDFRONT (GLOBAL)</strong></span></td>
+<td><code>server-192-0-2-101.example.r.cloudfront.net</code></td>
+<td><span style="color:#FB54FF"><strong>Amazon (AWS)</strong></span></td>
+<td>2027-05-01 (206d)</td>
+<td>✅ Active</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>docs</code><br><em>Heroku app</em></td>
+<td>CNAME</td>
+<td><code>missing-docs-site.herokuapp.com</code></td>
+<td>❌ NXDOMAIN</td>
+<td></td>
+<td>❌ no address</td>
+<td>❌ no address</td>
+<td></td>
+<td></td>
+<td></td>
+<td>none (not resolvable)</td>
+<td></td>
+<td>🔴 <strong>Dangling CNAME</strong>: target <code>missing-docs-site.herokuapp.com</code> does not exist (NXDOMAIN) - provider allows re-claiming the name, <strong>subdomain-takeover risk</strong>. Delete the record.</td>
+<td>🗑️ Yes</td>
+</tr>
+<tr>
+<td><code>ftp</code><br><em>Alias of the apex (example.com)</em></td>
+<td>CNAME</td>
+<td><code>example.com</code></td>
+<td><code>192.0.2.10</code></td>
+<td>✅ 1/1</td>
+<td>301 → https://www.example.com/</td>
+<td>301 → https://www.example.com/</td>
+<td>AS396982 GOOGLE-CLOUD-PLATFORM - Googl…</td>
+<td>☁️ <span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td><code>10.2.0.192.bc.googleusercontent.com</code></td>
+<td><span style="color:#1E64D4"><strong>Google Trust Services (Google)</strong></span></td>
+<td>2027-03-01 (145d)</td>
+<td>🔵 Registrar-default <code>ftp</code> record; FTP port 21 is closed</td>
+<td>🗑️ Likely</td>
+</tr>
+<tr>
+<td><code>lb</code><br><em>AWS Elastic Load Balancer</em></td>
+<td>CNAME</td>
+<td><code>demo-nlb-0123456789abcdef.elb.us-east-1.amazonaws…</code></td>
+<td><code>192.0.2.120</code></td>
+<td>❌ 0/1</td>
+<td>404 (envoy)</td>
+<td>404 (envoy)</td>
+<td>AS16509 AMAZON-02 - Amazon.com, Inc.,…</td>
+<td>☁️ <span style="color:#FB54FF"><strong>AWS - EC2 (us-east-1)</strong></span></td>
+<td><code>ec2-192-0-2-120.compute-1.amazonaws.com</code></td>
+<td><span style="color:#FB54FF"><strong>Amazon (AWS)</strong></span></td>
+<td>2027-05-01 (206d)</td>
+<td>🔵 HTTPS answers 404 at <code>/</code> - API-only, or LB with no matching route</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>shop</code><br><em>Cloudflare proxied hostname (partial / CNAME setup)</em></td>
+<td>CNAME</td>
+<td><code>shop.example.com.cdn.cloudflare.net</code></td>
+<td><code>198.51.100.200</code><br><code>198.51.100.201</code></td>
+<td>✅ 2/2</td>
+<td>301 → https://shop.example.com/ (cloudflare)</td>
+<td>200 (cloudflare)</td>
+<td>AS13335 CLOUDFLARENET - Cloudflare, I…</td>
+<td>☁️ <span style="color:#FE5E1F"><strong>Cloudflare - CDN/Proxy</strong></span></td>
+<td></td>
+<td><span style="color:#FE5E1F"><strong>Let's Encrypt (Let's Encrypt)</strong></span></td>
+<td>2026-12-30 (84d)</td>
+<td>🔵 Certificate expires in 84 days - managed/ACME issuer, auto-renewal expected</td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="ip-address-details">IP address details</h2>
+<p>Whois = RDAP registration of the IP block. Cloud = match against the provider's published IP ranges (AWS, GCP, Google, Cloudflare, DigitalOcean), else ASN.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>IP</th>
+<th>ICMP</th>
+<th>TCP</th>
+<th>ASN</th>
+<th>ASN name</th>
+<th>Whois org</th>
+<th>Net name</th>
+<th>Net CIDR</th>
+<th>Country</th>
+<th>Cloud / service</th>
+<th>Reverse DNS (PTR)</th>
+<th>Used by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>198.51.100.40</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>198.51.100.0/24</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td><code>40.100.51.198.bc.googleusercontent.com</code></td>
+<td><code>*.preview</code></td>
+</tr>
+<tr>
+<td><code>192.0.2.10</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>192.0.2.0/24</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td><code>10.2.0.192.bc.googleusercontent.com</code></td>
+<td><code>@</code>, <code>ftp</code>, <code>www</code></td>
+</tr>
+<tr>
+<td><code>198.51.100.20</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>198.51.100.0/24</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (us-central1)</strong></span></td>
+<td><code>20.100.51.198.bc.googleusercontent.com</code></td>
+<td><code>api</code></td>
+</tr>
+<tr>
+<td><code>2001:db8:10::20</code></td>
+<td>✅ 4ms (remote)</td>
+<td>n/a</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>2001:db8::/32</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (global)</strong></span></td>
+<td>NXDOMAIN</td>
+<td><code>api</code></td>
+</tr>
+<tr>
+<td><code>198.51.100.30</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>198.51.100.0/24</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (europe-west1)</strong></span></td>
+<td><code>30.100.51.198.bc.googleusercontent.com</code></td>
+<td><code>app</code></td>
+</tr>
+<tr>
+<td><code>192.0.2.101</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS16509</td>
+<td>AMAZON-02 - Amazon.com, Inc., US</td>
+<td>Amazon Technologies Inc.</td>
+<td>AMAZON-IAD</td>
+<td>192.0.2.0/24</td>
+<td>US</td>
+<td><span style="color:#FB54FF"><strong>AWS - CLOUDFRONT (GLOBAL)</strong></span></td>
+<td><code>server-192-0-2-101.example.r.cloudfront.net</code></td>
+<td><code>cdn</code></td>
+</tr>
+<tr>
+<td><code>192.0.2.102</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS16509</td>
+<td>AMAZON-02 - Amazon.com, Inc., US</td>
+<td>Amazon Technologies Inc.</td>
+<td>AMAZON-IAD</td>
+<td>192.0.2.0/24</td>
+<td>US</td>
+<td><span style="color:#FB54FF"><strong>AWS - CLOUDFRONT (GLOBAL)</strong></span></td>
+<td><code>server-192-0-2-102.example.r.cloudfront.net</code></td>
+<td><code>cdn</code></td>
+</tr>
+<tr>
+<td><code>192.0.2.120</code></td>
+<td>❌</td>
+<td>80✅ 443✅</td>
+<td>AS16509</td>
+<td>AMAZON-02 - Amazon.com, Inc., US</td>
+<td>Amazon Technologies Inc.</td>
+<td>AMAZON-IAD</td>
+<td>192.0.2.0/24</td>
+<td>US</td>
+<td><span style="color:#FB54FF"><strong>AWS - EC2 (us-east-1)</strong></span></td>
+<td><code>ec2-192-0-2-120.compute-1.amazonaws.com</code></td>
+<td><code>lb</code></td>
+</tr>
+<tr>
+<td><code>203.0.113.50</code></td>
+<td>✅ 4ms</td>
+<td>80❌ 443❌</td>
+<td>AS64500</td>
+<td>EXAMPLE-HOSTING - Example Hosting Ltd, US</td>
+<td>Example Hosting Ltd</td>
+<td>EXH-NET</td>
+<td>203.0.113.0/24</td>
+<td>US</td>
+<td>not cloud</td>
+<td><code>vm50.hosting.example</code></td>
+<td><code>legacy-vm</code></td>
+</tr>
+<tr>
+<td><code>203.0.113.99</code></td>
+<td>❌</td>
+<td>80❌ 443❌</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>203.0.113.0/24</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (us-central1)</strong></span></td>
+<td>NXDOMAIN</td>
+<td><code>old-test-todelete</code></td>
+</tr>
+<tr>
+<td><code>198.51.100.200</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS13335</td>
+<td>CLOUDFLARENET - Cloudflare, Inc., US</td>
+<td>Cloudflare, Inc.</td>
+<td>CLOUDFLARENET</td>
+<td>198.51.100.0/24</td>
+<td>US</td>
+<td><span style="color:#FE5E1F"><strong>Cloudflare - CDN/Proxy</strong></span></td>
+<td>NXDOMAIN</td>
+<td><code>shop</code></td>
+</tr>
+<tr>
+<td><code>198.51.100.201</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS13335</td>
+<td>CLOUDFLARENET - Cloudflare, Inc., US</td>
+<td>Cloudflare, Inc.</td>
+<td>CLOUDFLARENET</td>
+<td>198.51.100.0/24</td>
+<td>US</td>
+<td><span style="color:#FE5E1F"><strong>Cloudflare - CDN/Proxy</strong></span></td>
+<td>NXDOMAIN</td>
+<td><code>shop</code></td>
+</tr>
+<tr>
+<td><code>203.0.113.60</code></td>
+<td>✅ 4ms</td>
+<td>80✅ 443✅</td>
+<td>AS396982</td>
+<td>GOOGLE-CLOUD-PLATFORM - Google LLC, US</td>
+<td>Google LLC</td>
+<td>GOOGLE-CLOUD</td>
+<td>203.0.113.0/24</td>
+<td>US</td>
+<td><span style="color:#1E64D4"><strong>Google Cloud (us-east1)</strong></span></td>
+<td><code>60.113.0.203.bc.googleusercontent.com</code></td>
+<td><code>staging</code></td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="certificate-validation-service-records-underscore-cnames">Certificate validation &amp; service records (underscore CNAMEs)</h2>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Value</th>
+<th>Purpose</th>
+<th>Insights / action</th>
+<th>Removable?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>_0123456789abcdef0123456789abcdef</code></td>
+<td>CNAME</td>
+<td><code>_fedcba9876543210fedcba9876543210.abcdefghij.acm-validations.aws</code></td>
+<td>AWS Certificate Manager (ACM) DNS validation</td>
+<td>🔵 Validates ACM certificates for <code>example.com</code> / <code>*.example.com</code>. ACM re-checks it for <strong>automatic renewal</strong>, so it must stay while the ACM certificate exists.<br>🔵 AWS still serves the validation target<br>✅ In use: <code>cdn</code>, <code>lb</code> serve(s) an Amazon certificate for this name</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>_acme-challenge</code></td>
+<td>CNAME</td>
+<td><code>00000000-1111-2222-3333-444444444444.1.authorize.certificatemanager.g…</code></td>
+<td>Google Certificate Manager DNS authorization</td>
+<td>🔵 DNS authorization for Google-managed certificates covering <code>example.com</code> / <code>*.example.com</code> (Certificate Manager). Google needs it for every renewal.<br>✅ In use: <code>@</code>, <code>www</code>, <code>ftp</code> serve(s) a Google Trust Services certificate for this name</td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="txt-records">TXT records</h2>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Value</th>
+<th>Purpose</th>
+<th>Insights / action</th>
+<th>Removable?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@</code></td>
+<td>TXT</td>
+<td><code>_globalsign-domain-verification=EXAMPLE-globalsign-token</code></td>
+<td>GlobalSign CA domain-control validation (one-time, at certificate order)</td>
+<td>🔵 Only needed while GlobalSign validates an order. After issuance it can be removed (GlobalSign re-validates via a new token at renewal).<br>✅ No host serves a GlobalSign certificate - validation is over</td>
+<td>🗑️ Yes</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>TXT</td>
+<td><code>a1b2c3d4e5</code></td>
+<td>Unidentified verification token</td>
+<td>🟠 Unknown TXT (bare token, no vendor prefix). Usually a one-time SaaS/CA ownership check. Ask owners; if nobody claims it, remove it.</td>
+<td>🔍 Review</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>TXT</td>
+<td><code>google-site-verification=EXAMPLE-token-one</code></td>
+<td>Google site verification (Search Console / Workspace / GCS domain-named buckets / Cloud domain mapping)</td>
+<td>🔵 Google re-checks ownership periodically, so removing an <em>active</em> token un-verifies the property. Keep the active ones; delete the tokens no longer listed under Search Console &gt; Settings &gt; Ownership verification (or Google Admin &gt; Domains).<br>🟠 2 Google verification tokens on this name - usually left by different people/properties over time; prune the ones not in Search Console</td>
+<td>🔍 Review</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>TXT</td>
+<td><code>google-site-verification=EXAMPLE-token-two</code></td>
+<td>Google site verification (Search Console / Workspace / GCS domain-named buckets / Cloud domain mapping)</td>
+<td>🔵 Same pattern as above - see first occurrence</td>
+<td>🔍 Review</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>TXT</td>
+<td><code>v=spf1 include:_spf.google.com ~all</code></td>
+<td>SPF - authorised mail senders</td>
+<td>🔵 Senders: _spf.google.com (Google Workspace)<br>✅ 1/10 DNS lookups used<br>🔵 <code>~all</code> softfail - with DMARC p=reject this is fine; <code>-all</code> is stricter<br>🔵 Review whether every listed sender (marketing/support tools) is still in use</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>_abcdefghij0123456789</code></td>
+<td>TXT</td>
+<td><code>vpce:EXAMPLEvpceToken01</code></td>
+<td>AWS VPC Endpoint Service (PrivateLink) private-DNS-name ownership verification</td>
+<td>🔵 AWS needs it until the endpoint service's private DNS name shows <strong>verified</strong>. Match the token against <code>aws ec2 describe-vpc-endpoint-service-configurations --query "ServiceConfigurations[].PrivateDnsNameConfiguration"</code> (in every region used). Tokens that no current endpoint service lists are leftovers and can be deleted.</td>
+<td>🔍 Review</td>
+</tr>
+<tr>
+<td><code>_dmarc</code></td>
+<td>TXT</td>
+<td><code>v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com</code></td>
+<td>DMARC policy</td>
+<td>🟠 Policy p=quarantine<br>🔵 Aggregate reports -&gt; mailto:dmarc-reports@example.com</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>cloudflare-verify</code></td>
+<td>TXT</td>
+<td><code>123456789-987654321</code></td>
+<td>Cloudflare partial (CNAME) setup zone-ownership verification</td>
+<td>✅ Cloudflare CNAME setup in use (1 hostnames point to cdn.cloudflare.net) - keep</td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="mail-mx">Mail (MX)</h2>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Value</th>
+<th>Purpose</th>
+<th>Insights / action</th>
+<th>Removable?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@</code></td>
+<td>MX</td>
+<td><code>1 aspmx.l.google.com</code></td>
+<td>Mail exchanger - Google Workspace</td>
+<td>✅ MX host resolves<br>🔵 Legacy 5-record Google MX set - still valid; Google now also supports a single <code>smtp.google.com</code> MX (optional)</td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="delegation-ns-soa">Delegation (NS / SOA)</h2>
+<div class="tw wide"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Value</th>
+<th>Purpose</th>
+<th>Insights / action</th>
+<th>Removable?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@</code></td>
+<td>SOA</td>
+<td><code>ns1.dns-provider.example. hostmaster.example.com. 2026100601 28800 72…</code></td>
+<td>Start of authority</td>
+<td></td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>NS</td>
+<td><code>ns1.dns-provider.example</code></td>
+<td>Nameserver</td>
+<td>✅ Matches registry delegation</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>@</code></td>
+<td>NS</td>
+<td><code>ns2.dns-provider.example</code></td>
+<td>Nameserver</td>
+<td>✅ Matches registry delegation</td>
+<td>No</td>
+</tr>
+</tbody>
+</table></div>
+<hr>
+<h3>Method &amp; legend</h3>
+<ul>
+<li>🔴 critical · 🟠 warning · 🔵 info · ✅ OK. Expiry dates are marked 🔴 <span style="color:red"><strong>red</strong></span> when less than 60 days away (or already passed) and 🟠 <span style="color:darkorange"><strong>orange</strong></span> when less than 90 days away, relative to the scan time.</li>
+<li><strong>Removable?</strong> 🗑️ Yes = evidence says safe to delete · 🗑️ Likely = probably unused, confirm with owner · 🔍 Review = check in the relevant console · No = in use / required.</li>
+<li>DNS: public resolvers (8.8.8.8, 1.1.1.1) for live resolution; the zone's authoritative server (<code>ns1.dns-provider.example</code>) to compare the export against what is served now.</li>
+<li>Wildcard records are probed via a random label under the wildcard.</li>
+<li>Whois/ASN via RDAP (ipwhois); domain expiry via registry RDAP (IANA bootstrap) with WHOIS fallback.</li>
+<li>Certificates fetched with SNI and read even when untrusted/expired; trust and name-match evaluated separately.</li>
+<li>dns-zone-scan demo · schema 1 · scanner <code>demo</code></li>
+</ul>
+</main>
+<script>
+(function () {
+  var collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base'});
+  var globalBox = document.getElementById('filter'), globalCount = document.getElementById('count');
+  var tables = [];
+
+  // Wide tables are regrouped so they fit a normal screen: related fields are stacked in one cell.
+  // Each group = list of lines, each line = list of original column names shown side by side.
+  var LAYOUTS = [
+    {needs: 'Insights / action', has: 'Resolves to (live)', groups: [
+      {title: 'Record', lines: [['Name'], ['Type', 'Zone value']]},
+      {title: 'Resolves to / ICMP', lines: [['Resolves to (live)'], ['ICMP'], ['Reverse DNS']]},
+      {title: 'HTTP / HTTPS', lines: [['HTTP'], ['HTTPS']]},
+      {title: 'Network', lines: [['Cloud'], ['ASN']]},
+      {title: 'Certificate', lines: [['Cert expiry'], ['Certificate issuer']]},
+      {title: 'Insights / action', lines: [['Insights / action']]},
+      {title: 'Removable?', lines: [['Removable?']]}]},
+    {needs: 'Used by', has: 'Whois org', groups: [
+      {title: 'IP', lines: [['IP'], ['ICMP', 'TCP']]},
+      {title: 'Used by', lines: [['Used by']]},
+      {title: 'Cloud / service', lines: [['Cloud / service'], ['Reverse DNS (PTR)']]},
+      {title: 'ASN', lines: [['ASN'], ['ASN name']]},
+      {title: 'Whois', lines: [['Whois org'], ['Net name', 'Country'], ['Net CIDR']]}]}
+  ];
+  var SHORT = {'Zone value': 'value', 'Reverse DNS': 'rDNS', 'Reverse DNS (PTR)': 'rDNS', 'Cert expiry': 'expiry',
+               'Certificate issuer': 'issuer', 'Resolves to (live)': 'resolves', 'ASN name': 'name',
+               'Whois org': 'org', 'Net name': 'net', 'Net CIDR': 'CIDR'};
+  function short(n) { return SHORT[n] || n; }
+
+  function norm(el) { return el ? el.textContent.replace(/\s+/g, ' ').trim() : ''; }
+
+  function regroup(table) {
+    var head = table.tHead, body = table.tBodies[0];
+    var names = Array.prototype.map.call(head.rows[0].cells, norm);
+    var layout = LAYOUTS.filter(function (l) {
+      return names.indexOf(l.needs) !== -1 && names.indexOf(l.has) !== -1;
+    })[0];
+    if (!layout) return null;
+    var idx = {}; names.forEach(function (n, i) { idx[n] = i; });
+    var tr = document.createElement('tr');
+    layout.groups.forEach(function (g) {
+      var th = document.createElement('th');
+      th.textContent = g.title;
+      th._cols = [].concat.apply([], g.lines).filter(function (c) { return c in idx; });
+      tr.appendChild(th);
+    });
+    head.replaceChild(tr, head.rows[0]);
+    Array.prototype.slice.call(body.rows).forEach(function (row) {
+      var vals = {}, cells = row.cells, out = document.createElement('tr');
+      names.forEach(function (n, i) { vals[n] = norm(cells[i]); });
+      layout.groups.forEach(function (g, gi) {
+        var td = document.createElement('td');
+        g.lines.forEach(function (line, li) {
+          var parts = line.filter(function (c) { return c in idx && vals[c]; });
+          if (!parts.length) return;
+          var div = document.createElement('div');
+          div.className = li ? 'sub' : 'main';
+          parts.forEach(function (c, pi) {
+            var span = document.createElement('span');
+            span.className = 'part';
+            if (li || pi) {   // label everything except the leading value of a group
+              var lab = document.createElement('span');
+              lab.className = 'lab'; lab.textContent = short(c);
+              span.appendChild(lab);
+            }
+            var v = document.createElement('span');
+            v.innerHTML = cells[idx[c]].innerHTML;
+            span.appendChild(v);
+            div.appendChild(span);
+          });
+          td.appendChild(div);
+        });
+        out.appendChild(td);
+      });
+      out._vals = vals;
+      body.replaceChild(out, row);
+    });
+    return true;
+  }
+
+  // "text" contains, "!text" does not contain; several terms separated by spaces must all match
+  function matches(text, query) {
+    if (!query) return true;
+    text = text.toLowerCase();
+    return query.toLowerCase().split(/\s+/).every(function (term) {
+      if (!term) return true;
+      if (term.charAt(0) === '!' && term.length > 1) return text.indexOf(term.slice(1)) === -1;
+      return text.indexOf(term) !== -1;
+    });
+  }
+
+  function applyAll() {
+    var g = globalBox.value.trim(), shownTotal = 0, rowsTotal = 0;
+    tables.forEach(function (t) {
+      var shown = 0;
+      t.rows.forEach(function (r) {
+        var ok = matches(r.textContent, g) && t.inputs.every(function (inp, i) {
+          return matches(norm(r.cells[i]), inp.value.trim());
+        });
+        r.style.display = ok ? '' : 'none';
+        if (ok) shown++;
+      });
+      var active = t.inputs.some(function (i) { return i.value.trim(); });
+      t.inputs.forEach(function (i) { i.classList.toggle('active', !!i.value.trim()); });
+      t.count.textContent = (active || g) ? shown + ' of ' + t.rows.length + ' rows shown' : t.rows.length + ' rows';
+      t.clear.style.visibility = active ? 'visible' : 'hidden';
+      shownTotal += shown; rowsTotal += t.rows.length;
+    });
+    globalCount.textContent = g ? shownTotal + ' / ' + rowsTotal + ' rows' : '';
+  }
+
+  // keys = sortable things: plain column (by cell text) or a field inside a grouped column
+  function sortBy(t, key) {
+    var dir = t.sortKey === key ? (t.sortDir === 1 ? -1 : t.sortDir === -1 ? 0 : 1) : 1;
+    t.sortKey = dir ? key : null; t.sortDir = dir;
+    var rows = dir ? t.rows.slice().sort(function (a, b) {
+      var x = key.get(a), y = key.get(b);
+      if (!x && y) return 1;            // empty values always last
+      if (x && !y) return -1;
+      return dir * collator.compare(x, y) || (a._idx - b._idx);
+    }) : t.original;
+    rows.forEach(function (r) { t.body.appendChild(r); });
+    t.keys.forEach(function (k) {
+      k.el.classList.toggle('sorted', k === t.sortKey);
+      k.arrow.textContent = k === t.sortKey ? (dir === 1 ? '\u25B2' : '\u25BC') : '\u21C5';
+    });
+  }
+
+  function makeKey(t, el, get) {
+    var arrow = document.createElement('span');
+    arrow.className = 'arrow'; arrow.textContent = '\u21C5';
+    el.appendChild(arrow);
+    var key = {el: el, arrow: arrow, get: get};
+    el.addEventListener('click', function (e) { e.stopPropagation(); sortBy(t, key); });
+    t.keys.push(key);
+    return key;
+  }
+
+  document.querySelectorAll('.tw table').forEach(function (table) {
+    var head = table.tHead, body = table.tBodies[0];
+    if (!head || !body) return;
+    if (Array.prototype.every.call(head.rows[0].cells, function (th) { return !norm(th); })) return;  // key/value block
+    var grouped = regroup(table);
+    if (grouped) table.parentNode.classList.add('grouped');
+    var headers = Array.prototype.slice.call(head.rows[0].cells);
+    var t = {body: body, sortKey: null, sortDir: 0, inputs: [], keys: []};
+    t.rows = Array.prototype.slice.call(body.rows);
+    t.rows.forEach(function (r, i) { r._idx = i; });
+    t.original = t.rows.slice();
+
+    var filterRow = document.createElement('tr');
+    filterRow.className = 'filters';
+    headers.forEach(function (th, i) {
+      var cols = th._cols;
+      if (cols && cols.length > 1) {
+        // grouped column: one sort link per field
+        var subs = document.createElement('div');
+        subs.className = 'subsorts';
+        cols.forEach(function (c) {
+          var a = document.createElement('span');
+          a.className = 'subsort'; a.textContent = short(c); a.title = 'Sort by ' + c;
+          subs.appendChild(a);
+          makeKey(t, a, function (r) { return r._vals[c]; });
+        });
+        th.appendChild(subs);
+      } else {
+        th.classList.add('sortable');
+        th.title = 'Click to sort';
+        makeKey(t, th, cols ? function (r) { return r._vals[cols[0]]; } : function (r) { return norm(r.cells[i]); });
+      }
+      var cell = document.createElement('th'), inp = document.createElement('input');
+      inp.type = 'search'; inp.placeholder = 'filter'; inp.title = 'Contains text; !text = does not contain';
+      inp.addEventListener('input', applyAll);
+      cell.appendChild(inp); filterRow.appendChild(cell); t.inputs.push(inp);
+    });
+    head.appendChild(filterRow);
+
+    var meta = document.createElement('div'); meta.className = 'tw-meta';
+    t.count = document.createElement('span');
+    t.clear = document.createElement('button'); t.clear.type = 'button'; t.clear.textContent = 'Clear filters';
+    t.clear.addEventListener('click', function () { t.inputs.forEach(function (i) { i.value = ''; }); applyAll(); });
+    meta.appendChild(t.count); meta.appendChild(t.clear);
+    table.parentNode.appendChild(meta);
+    tables.push(t);
+  });
+
+  globalBox.addEventListener('input', applyAll);
+  applyAll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+; Domain: example.com
+; Exported (y-m-d hh:mm:ss): 2026-10-06 08:55:00
+$ORIGIN example.com.
+@	3600	IN	SOA	ns1.dns-provider.example. hostmaster.example.com. ( 2026100601 28800 7200 604800 3600 )
+@	3600	IN	NS	ns1.dns-provider.example.
+@	3600	IN	NS	ns2.dns-provider.example.
+@	3600	IN	A	192.0.2.10
+www	3600	IN	A	192.0.2.10
+api	3600	IN	A	198.51.100.20
+api	3600	IN	AAAA	2001:db8:10::20
+app	3600	IN	A	198.51.100.30
+*.preview	3600	IN	A	198.51.100.40
+staging	3600	IN	A	203.0.113.60
+legacy-vm	3600	IN	A	203.0.113.50
+old-test-todelete	3600	IN	A	203.0.113.99
+cdn	3600	IN	CNAME	d111111abcdef8.cloudfront.net.
+lb	3600	IN	CNAME	demo-nlb-0123456789abcdef.elb.us-east-1.amazonaws.com.
+shop	3600	IN	CNAME	shop.example.com.cdn.cloudflare.net.
+docs	3600	IN	CNAME	missing-docs-site.herokuapp.com.
+ftp	3600	IN	CNAME	@
+_0123456789abcdef0123456789abcdef	3600	IN	CNAME	_fedcba9876543210fedcba9876543210.abcdefghij.acm-validations.aws.
+_acme-challenge	3600	IN	CNAME	00000000-1111-2222-3333-444444444444.1.authorize.certificatemanager.goog.
+@	3600	IN	MX	1	aspmx.l.google.com.
+@	3600	IN	TXT	"v=spf1 include:_spf.google.com ~all"
+@	3600	IN	TXT	"google-site-verification=EXAMPLE-token-one"
+@	3600	IN	TXT	"google-site-verification=EXAMPLE-token-two"
+@	3600	IN	TXT	"_globalsign-domain-verification=EXAMPLE-globalsign-token"
+@	3600	IN	TXT	"a1b2c3d4e5"
+_abcdefghij0123456789	3600	IN	TXT	"vpce:EXAMPLEvpceToken01"
+cloudflare-verify	3600	IN	TXT	"123456789-987654321"
+_dmarc	3600	IN	TXT	"v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com"

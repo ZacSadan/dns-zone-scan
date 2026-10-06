@@ -1,0 +1,19 @@
+# Zone exports and scan results are private - only the empty folders are tracked
+input/*
+!input/.gitkeep
+output/*
+!output/.gitkeep
+
+# Local caches
+.cache/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# Packaging build output
+*.egg-info/
+build/
+dist/

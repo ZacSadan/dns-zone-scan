@@ -1,0 +1,1275 @@
+{
+ "schema_version": 1,
+ "tool_version": "demo",
+ "input_file": "example.com.txt",
+ "scan_started": "2026-10-06T09:00:00+00:00",
+ "scan_finished": "2026-10-06T09:01:30+00:00",
+ "scan_local_stamp": "demo",
+ "scanner": {
+  "hostname": "demo",
+  "ipv6": false
+ },
+ "cloud_ranges_loaded": {},
+ "domain": "example.com",
+ "exported": "2026-10-06 08:55:00",
+ "records": [
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "SOA",
+   "ttl": 3600,
+   "value": "ns1.dns-provider.example. hostmaster.example.com. 2026100601 28800 7200 604800 3600",
+   "id": 0
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "NS",
+   "ttl": 3600,
+   "value": "ns1.dns-provider.example.",
+   "target": "ns1.dns-provider.example",
+   "id": 1
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "NS",
+   "ttl": 3600,
+   "value": "ns2.dns-provider.example.",
+   "target": "ns2.dns-provider.example",
+   "id": 2
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "192.0.2.10",
+   "address": "192.0.2.10",
+   "id": 3
+  },
+  {
+   "name": "*.preview",
+   "fqdn": "*.preview.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "198.51.100.40",
+   "address": "198.51.100.40",
+   "id": 4
+  },
+  {
+   "name": "api",
+   "fqdn": "api.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "198.51.100.20",
+   "address": "198.51.100.20",
+   "id": 5
+  },
+  {
+   "name": "app",
+   "fqdn": "app.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "198.51.100.30",
+   "address": "198.51.100.30",
+   "id": 6
+  },
+  {
+   "name": "legacy-vm",
+   "fqdn": "legacy-vm.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "203.0.113.50",
+   "address": "203.0.113.50",
+   "id": 7
+  },
+  {
+   "name": "old-test-todelete",
+   "fqdn": "old-test-todelete.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "203.0.113.99",
+   "address": "203.0.113.99",
+   "id": 8
+  },
+  {
+   "name": "staging",
+   "fqdn": "staging.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "203.0.113.60",
+   "address": "203.0.113.60",
+   "id": 9
+  },
+  {
+   "name": "www",
+   "fqdn": "www.example.com",
+   "type": "A",
+   "ttl": 3600,
+   "value": "192.0.2.10",
+   "address": "192.0.2.10",
+   "id": 10
+  },
+  {
+   "name": "api",
+   "fqdn": "api.example.com",
+   "type": "AAAA",
+   "ttl": 3600,
+   "value": "2001:db8:10::20",
+   "address": "2001:db8:10::20",
+   "id": 11
+  },
+  {
+   "name": "_0123456789abcdef0123456789abcdef",
+   "fqdn": "_0123456789abcdef0123456789abcdef.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "_fedcba9876543210fedcba9876543210.abcdefghij.acm-validations.aws.",
+   "target": "_fedcba9876543210fedcba9876543210.abcdefghij.acm-validations.aws",
+   "id": 12
+  },
+  {
+   "name": "_acme-challenge",
+   "fqdn": "_acme-challenge.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "00000000-1111-2222-3333-444444444444.1.authorize.certificatemanager.goog.",
+   "target": "00000000-1111-2222-3333-444444444444.1.authorize.certificatemanager.goog",
+   "id": 13
+  },
+  {
+   "name": "cdn",
+   "fqdn": "cdn.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "d111111abcdef8.cloudfront.net.",
+   "target": "d111111abcdef8.cloudfront.net",
+   "id": 14
+  },
+  {
+   "name": "docs",
+   "fqdn": "docs.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "missing-docs-site.herokuapp.com.",
+   "target": "missing-docs-site.herokuapp.com",
+   "id": 15
+  },
+  {
+   "name": "ftp",
+   "fqdn": "ftp.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "example.com.",
+   "target": "example.com",
+   "id": 16
+  },
+  {
+   "name": "lb",
+   "fqdn": "lb.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "demo-nlb-0123456789abcdef.elb.us-east-1.amazonaws.com.",
+   "target": "demo-nlb-0123456789abcdef.elb.us-east-1.amazonaws.com",
+   "id": 17
+  },
+  {
+   "name": "shop",
+   "fqdn": "shop.example.com",
+   "type": "CNAME",
+   "ttl": 3600,
+   "value": "shop.example.com.cdn.cloudflare.net.",
+   "target": "shop.example.com.cdn.cloudflare.net",
+   "id": 18
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "MX",
+   "ttl": 3600,
+   "value": "1 aspmx.l.google.com.",
+   "preference": 1,
+   "target": "aspmx.l.google.com",
+   "id": 19
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"_globalsign-domain-verification=EXAMPLE-globalsign-token\"",
+   "text": "_globalsign-domain-verification=EXAMPLE-globalsign-token",
+   "id": 20
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"a1b2c3d4e5\"",
+   "text": "a1b2c3d4e5",
+   "id": 21
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"google-site-verification=EXAMPLE-token-one\"",
+   "text": "google-site-verification=EXAMPLE-token-one",
+   "id": 22
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"google-site-verification=EXAMPLE-token-two\"",
+   "text": "google-site-verification=EXAMPLE-token-two",
+   "id": 23
+  },
+  {
+   "name": "@",
+   "fqdn": "example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"v=spf1 include:_spf.google.com ~all\"",
+   "text": "v=spf1 include:_spf.google.com ~all",
+   "id": 24
+  },
+  {
+   "name": "_abcdefghij0123456789",
+   "fqdn": "_abcdefghij0123456789.example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"vpce:EXAMPLEvpceToken01\"",
+   "text": "vpce:EXAMPLEvpceToken01",
+   "id": 25
+  },
+  {
+   "name": "_dmarc",
+   "fqdn": "_dmarc.example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com\"",
+   "text": "v=DMARC1; p=quarantine; rua=mailto:dmarc-reports@example.com",
+   "id": 26
+  },
+  {
+   "name": "cloudflare-verify",
+   "fqdn": "cloudflare-verify.example.com",
+   "type": "TXT",
+   "ttl": 3600,
+   "value": "\"123456789-987654321\"",
+   "text": "123456789-987654321",
+   "id": 27
+  }
+ ],
+ "domain_info": {
+  "source": "synthetic demo data",
+  "expiration": "2026-12-25T00:00:00Z",
+  "registration": "2015-01-15T00:00:00Z",
+  "registrar": "Example Registrar, Inc.",
+  "status": [
+   "client transfer prohibited"
+  ],
+  "dnssec": false,
+  "nameservers": [
+   "ns1.dns-provider.example",
+   "ns2.dns-provider.example"
+  ]
+ },
+ "live_ns": {
+  "status": "OK",
+  "values": [
+   "ns1.dns-provider.example",
+   "ns2.dns-provider.example"
+  ]
+ },
+ "authoritative": {
+  "server": "ns1.dns-provider.example"
+ },
+ "auth_answers": {},
+ "hosts": {
+  "example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "192.0.2.10"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://www.example.com/",
+    "server": null
+   },
+   "https": {
+    "responded": true,
+    "status": 301,
+    "location": "https://www.example.com/",
+    "server": null
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Google Trust Services",
+    "issuer_cn": null,
+    "issuer_provider": "Google",
+    "subject_cn": "example.com",
+    "sans": [
+     "example.com",
+     "*.example.com"
+    ],
+    "not_after": "2027-03-01T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   }
+  },
+  "www.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "192.0.2.10"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://www.example.com/",
+    "server": null
+   },
+   "https": {
+    "responded": true,
+    "status": 200,
+    "location": null,
+    "server": "Google Frontend"
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Google Trust Services",
+    "issuer_cn": null,
+    "issuer_provider": "Google",
+    "subject_cn": "example.com",
+    "sans": [
+     "example.com",
+     "*.example.com"
+    ],
+    "not_after": "2027-03-01T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   }
+  },
+  "api.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "198.51.100.20"
+    ],
+    "aaaa": [
+     "2001:db8:10::20"
+    ],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://api.example.com/",
+    "server": null
+   },
+   "https": {
+    "responded": true,
+    "status": 404,
+    "location": null,
+    "server": null
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Google Trust Services",
+    "issuer_cn": null,
+    "issuer_provider": "Google",
+    "subject_cn": "api.example.com",
+    "sans": [
+     "api.example.com"
+    ],
+    "not_after": "2026-11-20T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   },
+   "http6": {
+    "responded": true,
+    "status": 301,
+    "location": "https://api.example.com/",
+    "server": null
+   },
+   "https6": {
+    "responded": true,
+    "status": 404,
+    "location": null,
+    "server": null
+   }
+  },
+  "app.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "198.51.100.30"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://app.example.com/",
+    "server": null
+   },
+   "https": {
+    "responded": true,
+    "status": 200,
+    "location": null,
+    "server": "nginx"
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "GoDaddy.com, Inc.",
+    "issuer_cn": null,
+    "issuer_provider": "GoDaddy",
+    "subject_cn": "example.com",
+    "sans": [
+     "example.com",
+     "*.example.com"
+    ],
+    "not_after": "2026-12-20T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   }
+  },
+  "*.preview.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "198.51.100.40"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": null,
+    "server": null
+   },
+   "https": {
+    "responded": true,
+    "status": 404,
+    "location": null,
+    "server": "nginx"
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Google Trust Services",
+    "issuer_cn": null,
+    "issuer_provider": "Google",
+    "subject_cn": "*.preview.example.com",
+    "sans": [
+     "*.preview.example.com"
+    ],
+    "not_after": "2026-12-28T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   },
+   "wildcard": true,
+   "probe_name": "zscan-probe-1a2b3c.preview.example.com"
+  },
+  "staging.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "203.0.113.60"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": false,
+    "error": "connection error"
+   },
+   "https": {
+    "responded": false,
+    "error": "TLS error"
+   },
+   "cert": {
+    "ok": false,
+    "error": "SSLEOFError"
+   }
+  },
+  "legacy-vm.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "203.0.113.50"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": false,
+    "error": "connect timeout"
+   },
+   "https": {
+    "responded": false,
+    "error": "connect timeout"
+   },
+   "cert": {
+    "ok": false,
+    "error": "timeout"
+   }
+  },
+  "old-test-todelete.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "203.0.113.99"
+    ],
+    "aaaa": [],
+    "cname_chain": [],
+    "cname_final_status": null
+   },
+   "http": {
+    "responded": false,
+    "error": "connect timeout"
+   },
+   "https": {
+    "responded": false,
+    "error": "connect timeout"
+   },
+   "cert": {
+    "ok": false,
+    "error": "timeout"
+   }
+  },
+  "cdn.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "192.0.2.101",
+     "192.0.2.102"
+    ],
+    "aaaa": [],
+    "cname_chain": [
+     "d111111abcdef8.cloudfront.net"
+    ],
+    "cname_final_status": "OK"
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://cdn.example.com/",
+    "server": "CloudFront"
+   },
+   "https": {
+    "responded": true,
+    "status": 200,
+    "location": null,
+    "server": "AmazonS3"
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Amazon",
+    "issuer_cn": null,
+    "issuer_provider": "AWS",
+    "subject_cn": "example.com",
+    "sans": [
+     "example.com",
+     "*.example.com"
+    ],
+    "not_after": "2027-05-01T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   }
+  },
+  "lb.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "192.0.2.120"
+    ],
+    "aaaa": [],
+    "cname_chain": [
+     "demo-nlb-0123456789abcdef.elb.us-east-1.amazonaws.com"
+    ],
+    "cname_final_status": "OK"
+   },
+   "http": {
+    "responded": true,
+    "status": 404,
+    "location": null,
+    "server": "envoy"
+   },
+   "https": {
+    "responded": true,
+    "status": 404,
+    "location": null,
+    "server": "envoy"
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Amazon",
+    "issuer_cn": null,
+    "issuer_provider": "AWS",
+    "subject_cn": "example.com",
+    "sans": [
+     "example.com",
+     "*.example.com"
+    ],
+    "not_after": "2027-05-01T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   }
+  },
+  "shop.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "198.51.100.200",
+     "198.51.100.201"
+    ],
+    "aaaa": [],
+    "cname_chain": [
+     "shop.example.com.cdn.cloudflare.net"
+    ],
+    "cname_final_status": "OK"
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://shop.example.com/",
+    "server": "cloudflare"
+   },
+   "https": {
+    "responded": true,
+    "status": 200,
+    "location": null,
+    "server": "cloudflare"
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Let's Encrypt",
+    "issuer_cn": null,
+    "issuer_provider": "Let's Encrypt",
+    "subject_cn": "shop.example.com",
+    "sans": [
+     "shop.example.com"
+    ],
+    "not_after": "2026-12-30T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   }
+  },
+  "docs.example.com": {
+   "resolve": {
+    "status": "NXDOMAIN",
+    "a": [],
+    "aaaa": [],
+    "cname_chain": [
+     "missing-docs-site.herokuapp.com"
+    ],
+    "cname_final_status": "NXDOMAIN"
+   },
+   "http": {
+    "responded": false,
+    "error": "no address"
+   },
+   "https": {
+    "responded": false,
+    "error": "no address"
+   },
+   "cert": {
+    "ok": false,
+    "error": "not resolvable"
+   }
+  },
+  "ftp.example.com": {
+   "resolve": {
+    "status": "OK",
+    "a": [
+     "192.0.2.10"
+    ],
+    "aaaa": [],
+    "cname_chain": [
+     "example.com"
+    ],
+    "cname_final_status": "OK"
+   },
+   "http": {
+    "responded": true,
+    "status": 301,
+    "location": "https://www.example.com/",
+    "server": null
+   },
+   "https": {
+    "responded": true,
+    "status": 301,
+    "location": "https://www.example.com/",
+    "server": null
+   },
+   "cert": {
+    "ok": true,
+    "issuer_org": "Google Trust Services",
+    "issuer_cn": null,
+    "issuer_provider": "Google",
+    "subject_cn": "example.com",
+    "sans": [
+     "example.com",
+     "*.example.com"
+    ],
+    "not_after": "2027-03-01T00:00:00+00:00",
+    "trusted": true,
+    "hostname_match": true,
+    "verify_error": null
+   },
+   "tcp21": {
+    "open": false,
+    "error": "timeout"
+   }
+  }
+ },
+ "targets": {
+  "missing-docs-site.herokuapp.com": {
+   "status": "NXDOMAIN"
+  },
+  "aspmx.l.google.com": {
+   "status": "OK"
+  },
+  "d111111abcdef8.cloudfront.net": {
+   "status": "OK"
+  },
+  "shop.example.com.cdn.cloudflare.net": {
+   "status": "OK"
+  },
+  "demo-nlb-0123456789abcdef.elb.us-east-1.amazonaws.com": {
+   "status": "OK"
+  }
+ },
+ "target_txt": {
+  "_fedcba9876543210fedcba9876543210.abcdefghij.acm-validations.aws": {
+   "status": "OK",
+   "values": [
+    "x"
+   ]
+  }
+ },
+ "dkim": {},
+ "ips": {
+  "192.0.2.10": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "10.2.0.192.bc.googleusercontent.com"
+    ]
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "global"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "192.0.2.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "198.51.100.20": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "20.100.51.198.bc.googleusercontent.com"
+    ]
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "us-central1"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "198.51.100.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "198.51.100.30": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "30.100.51.198.bc.googleusercontent.com"
+    ]
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "europe-west1"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "198.51.100.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "198.51.100.40": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "40.100.51.198.bc.googleusercontent.com"
+    ]
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "global"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "198.51.100.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "203.0.113.60": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "60.113.0.203.bc.googleusercontent.com"
+    ]
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "us-east1"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "203.0.113.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "203.0.113.50": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": false
+   },
+   "tcp443": {
+    "open": false
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "vm50.hosting.example"
+    ]
+   },
+   "cloud": null,
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "64500",
+     "asn_description": "EXAMPLE-HOSTING - Example Hosting Ltd, US",
+     "org": "Example Hosting Ltd",
+     "net_name": "EXH-NET",
+     "net_cidr": "203.0.113.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "203.0.113.99": {
+   "version": 4,
+   "icmp": {
+    "reply": false,
+    "rtt_ms": null
+   },
+   "tcp80": {
+    "open": false
+   },
+   "tcp443": {
+    "open": false
+   },
+   "ptr": {
+    "status": "NXDOMAIN",
+    "values": []
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "us-central1"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "203.0.113.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "192.0.2.101": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "server-192-0-2-101.example.r.cloudfront.net"
+    ]
+   },
+   "cloud": {
+    "provider": "AWS",
+    "service": "CLOUDFRONT",
+    "region": "GLOBAL"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "16509",
+     "asn_description": "AMAZON-02 - Amazon.com, Inc., US",
+     "org": "Amazon Technologies Inc.",
+     "net_name": "AMAZON-IAD",
+     "net_cidr": "192.0.2.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "192.0.2.102": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "server-192-0-2-102.example.r.cloudfront.net"
+    ]
+   },
+   "cloud": {
+    "provider": "AWS",
+    "service": "CLOUDFRONT",
+    "region": "GLOBAL"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "16509",
+     "asn_description": "AMAZON-02 - Amazon.com, Inc., US",
+     "org": "Amazon Technologies Inc.",
+     "net_name": "AMAZON-IAD",
+     "net_cidr": "192.0.2.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "192.0.2.120": {
+   "version": 4,
+   "icmp": {
+    "reply": false,
+    "rtt_ms": null
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "OK",
+    "values": [
+     "ec2-192-0-2-120.compute-1.amazonaws.com"
+    ]
+   },
+   "cloud": {
+    "provider": "AWS",
+    "service": "EC2",
+    "region": "us-east-1"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "16509",
+     "asn_description": "AMAZON-02 - Amazon.com, Inc., US",
+     "org": "Amazon Technologies Inc.",
+     "net_name": "AMAZON-IAD",
+     "net_cidr": "192.0.2.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "198.51.100.200": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "NXDOMAIN",
+    "values": []
+   },
+   "cloud": {
+    "provider": "Cloudflare",
+    "service": "CDN/Proxy",
+    "region": null
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "13335",
+     "asn_description": "CLOUDFLARENET - Cloudflare, Inc., US",
+     "org": "Cloudflare, Inc.",
+     "net_name": "CLOUDFLARENET",
+     "net_cidr": "198.51.100.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "198.51.100.201": {
+   "version": 4,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0
+   },
+   "tcp80": {
+    "open": true
+   },
+   "tcp443": {
+    "open": true
+   },
+   "ptr": {
+    "status": "NXDOMAIN",
+    "values": []
+   },
+   "cloud": {
+    "provider": "Cloudflare",
+    "service": "CDN/Proxy",
+    "region": null
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "13335",
+     "asn_description": "CLOUDFLARENET - Cloudflare, Inc., US",
+     "org": "Cloudflare, Inc.",
+     "net_name": "CLOUDFLARENET",
+     "net_cidr": "198.51.100.0/24",
+     "asn_country": "US"
+    }
+   }
+  },
+  "2001:db8:10::20": {
+   "version": 6,
+   "icmp": {
+    "reply": true,
+    "rtt_ms": 4.0,
+    "via": "globalping",
+    "probes": [
+     {
+      "probe": "Frankfurt DE (Example Net)"
+     },
+     {
+      "probe": "Singapore SG (Example Net)"
+     }
+    ]
+   },
+   "tcp80": {
+    "open": null
+   },
+   "tcp443": {
+    "open": null
+   },
+   "ptr": {
+    "status": "NXDOMAIN",
+    "values": []
+   },
+   "cloud": {
+    "provider": "Google Cloud",
+    "service": "Google Cloud",
+    "region": "global"
+   },
+   "asn_provider": null,
+   "rdap": {
+    "status": "OK",
+    "summary": {
+     "asn": "396982",
+     "asn_description": "GOOGLE-CLOUD-PLATFORM - Google LLC, US",
+     "org": "Google LLC",
+     "net_name": "GOOGLE-CLOUD",
+     "net_cidr": "2001:db8::/32",
+     "asn_country": "US"
+    }
+   }
+  }
+ },
+ "mail": {
+  "spf": {
+   "domain": "example.com",
+   "status": "OK",
+   "lookups": 1,
+   "total_lookups": 1,
+   "record": "v=spf1 include:_spf.google.com ~all",
+   "children": [
+    {
+     "domain": "_spf.google.com",
+     "status": "OK",
+     "lookups": 0,
+     "children": []
+    }
+   ]
+  },
+  "dmarc": {
+   "status": "OK"
+  },
+  "mx": {}
+ },
+ "remote_ipv6": {
+  "service": "globalping.io"
+ },
+ "errors": []
+}
