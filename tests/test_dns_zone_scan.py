@@ -237,6 +237,33 @@ def test_scanned_values_cannot_inject_html():
     assert "<img" not in report.http_cell({"responded": True, "status": 200, "server": evil})
 
 
+def test_config_tcp_ports(tmp_path: Path):
+    from dns_zone_scan import config
+    from dns_zone_scan.__main__ import zone_files
+
+    (tmp_path / "config.yaml").write_text("tcp_ports: [8080, '8443', 80, 8080]\n", encoding="utf-8")
+    (tmp_path / "example.test.txt").write_text(ZONE, encoding="utf-8")
+    assert config.load_config(config.find_config(tmp_path))["tcp_ports"] == [8080, 8443]  # 80/443 always probed
+    assert config.load_config(None)["tcp_ports"] == []
+    assert [p.name for p in zone_files(tmp_path, [])] == ["example.test.txt"]
+    for bad in ("tcp_ports: [70000]\n", "tcp_ports: [abc]\n"):
+        (tmp_path / "config.yaml").write_text(bad, encoding="utf-8")
+        try:
+            config.load_config(tmp_path / "config.yaml")
+            raise AssertionError(bad)
+        except ValueError:
+            pass
+
+
+def test_extra_tcp_port_keeps_host_alive():
+    scan = fake_scan()
+    scan["ips"]["192.0.2.99"]["tcp_extra"] = {"8080": {"open": True}}
+    an = insights.analyze(scan)["records"][rec(scan, "old-test-todelete", "A")["id"]]
+    assert not any("Nothing answers" in t for _, t in an["insights"])
+    assert any("TCP 8080 open" in t for _, t in an["insights"])
+    assert "8080✅" in report.render(scan)
+
+
 def test_spf_same_include_twice_is_not_a_loop(monkeypatch):
     from dns_zone_scan import resolve, scan
 

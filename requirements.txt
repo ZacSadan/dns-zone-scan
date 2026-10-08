@@ -4,4 +4,5 @@ requests>=2.31
 cryptography>=42
 python-whois>=0.9
 markdown>=3.5
+pyyaml>=6
 pytest>=8

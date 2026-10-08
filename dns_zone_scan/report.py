@@ -323,7 +323,9 @@ class Report:
                 icmp += " (remote)"
             p80 = (d.get("tcp80") or {}).get("open")
             p443 = (d.get("tcp443") or {}).get("open")
-            ports = "n/a" if p80 is None else " ".join(f"{p}{'✅' if o else '❌'}" for p, o in (("80", p80), ("443", p443)))
+            extra = [(p, t.get("open")) for p, t in (d.get("tcp_extra") or {}).items()]
+            ports = "n/a" if p80 is None else " ".join(f"{p}{'✅' if o else '❌'}"
+                                                        for p, o in [("80", p80), ("443", p443)] + extra)
             cloud = cloud_cell(d)
             names = sorted(users.get(ip, []))
             name_cell = expandable(names, 8)

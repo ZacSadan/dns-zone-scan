@@ -92,6 +92,15 @@ class Analyzer:
                 return True
         return False
 
+    def tcp_extra_open(self, ips: list[str]) -> list[str]:
+        """Configured extra ports (config.yaml tcp_ports) open on any of these IPs."""
+        found = []
+        for ip in ips:
+            for port, t in ((self.ips.get(ip) or {}).get("tcp_extra") or {}).items():
+                if t.get("open") and port not in found:
+                    found.append(port)
+        return sorted(found, key=int)
+
     def certs_for(self, domain_name: str, provider: str | None = None) -> list[tuple[str, dict]]:
         """Hosts whose served certificate covers domain_name (exact or wildcard SAN)."""
         out = []
@@ -157,7 +166,8 @@ class Analyzer:
         icmp_ok, icmp_tested, _ = self.icmp_summary(own_ips)
         web = http.get("responded") or https.get("responded")
         tcp_open = self.tcp_any_open(own_ips)
-        alive = bool(web or icmp_ok or tcp_open)
+        extra_open = self.tcp_extra_open(own_ips)
+        alive = bool(web or icmp_ok or tcp_open or extra_open)
         temp_hints, nonprod_hints = kb.name_hints(name)
 
         # AAAA tested from remote IPv6 probes (scanner has no IPv6): judge the IPv6 path on its own
@@ -168,6 +178,7 @@ class Analyzer:
             http, https = h.get("http6") or {}, h.get("https6") or {}
             web = bool(http.get("responded") or https.get("responded"))
             alive = bool(web or icmp_ok)
+            extra_open = []
 
         if rtype == "CNAME":
             target = rec.get("target", "")
@@ -228,7 +239,7 @@ class Analyzer:
                 removable = "Review"
         elif not alive and res.get("status") == "OK":
             strong = bool(temp_hints)
-            ins.append((WARN, "**Nothing answers** (no ICMP, no TCP 80/443, no HTTP/HTTPS) - candidate for deletion"
+            ins.append((WARN, "**Nothing answers** (no ICMP, no open TCP port, no HTTP/HTTPS) - candidate for deletion"
                         + (f"; name contains `{', '.join(temp_hints)}`" if strong else " (verify with the owner)")))
             if removable != "Yes":
                 removable = "Yes" if strong else "Likely"
@@ -241,6 +252,8 @@ class Analyzer:
             if removable == "No":
                 removable = "Review"
             self.add_action("review", f"`{name}` - ports open but HTTP/HTTPS broken ({https.get('error')})")
+        elif alive and not web and extra_open:
+            ins.append((INFO, f"Nothing on TCP 80/443, but TCP {', '.join(extra_open)} open (non-web service)"))
         elif alive and not web and icmp_ok:
             ins.append((WARN, "Answers ICMP only - nothing on TCP 80/443 (non-web service, or idle VM)"))
             if (temp_hints or nonprod_hints) and removable == "No":
