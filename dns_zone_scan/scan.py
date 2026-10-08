@@ -82,7 +82,8 @@ def spf_total_lookups(node: dict) -> int:
 
 
 def scan_zone(path: Path, workers: int = 32, timeout: float = 5.0, cloud_ranges=None,
-              remote_ipv6: bool = True) -> dict:
+              remote_ipv6: bool = True, tcp_ports: list[int] | None = None) -> dict:
+    tcp_ports = list(tcp_ports or [])
     started = dt.datetime.now(dt.timezone.utc)
     local_stamp = dt.datetime.now().strftime("%Y%m%d_%H%M")
     zone = parse_zone_file(path)
@@ -141,7 +142,7 @@ def scan_zone(path: Path, workers: int = 32, timeout: float = 5.0, cloud_ranges=
         ip_set.update(h.get("a", []))
         ip_set.update(h.get("aaaa", []))
     ips = sorted(ip_set, key=lambda i: (ipaddress.ip_address(i).version, ipaddress.ip_address(i)))
-    log(f"probing {len(ips)} IPs (ICMP/TCP/PTR/RDAP)...")
+    log(f"probing {len(ips)} IPs (ICMP/TCP {'/'.join(map(str, [80, 443] + tcp_ports))}/PTR/RDAP)...")
 
     def ip_facts(ip):
         v6 = ipaddress.ip_address(ip).version == 6
@@ -149,10 +150,12 @@ def scan_zone(path: Path, workers: int = 32, timeout: float = 5.0, cloud_ranges=
         if v6 and not env["ipv6"]:
             out["icmp"] = {"reply": None, "error": "scanner has no IPv6"}
             out["tcp80"] = out["tcp443"] = {"open": None, "error": "scanner has no IPv6"}
+            out["tcp_extra"] = {str(p): {"open": None, "error": "scanner has no IPv6"} for p in tcp_ports}
         else:
             out["icmp"] = probe.icmp(ip)
             out["tcp80"] = probe.tcp(ip, 80, timeout)
             out["tcp443"] = probe.tcp(ip, 443, timeout)
+            out["tcp_extra"] = {str(p): probe.tcp(ip, p, timeout) for p in tcp_ports}
         out["ptr"] = resolve.ptr(res, ip)
         out["cloud"] = cr.match(ip)
         return out
@@ -219,6 +222,7 @@ def scan_zone(path: Path, workers: int = 32, timeout: float = 5.0, cloud_ranges=
         "scan_finished": finished.isoformat(),
         "scan_local_stamp": local_stamp,
         "scanner": env,
+        "tcp_ports": [80, 443] + tcp_ports,
         "cloud_ranges_loaded": cr.loaded,
         "domain": dom,
         "exported": zone["exported"],

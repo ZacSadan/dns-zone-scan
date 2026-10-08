@@ -50,7 +50,19 @@ python -m dns_zone_scan report [json...]   # rebuild .md + .html from saved scan
 
 After `pip install`, `dns-zone-scan` works as a shortcut for `python -m dns_zone_scan` (same commands and options).
 
-Options: `--input DIR`, `--output DIR`, `--workers N` (default 32), `--timeout SECONDS` (default 5), `--no-remote` (see IPv6 below).
+Options: `--input DIR`, `--output DIR`, `--workers N` (default 32), `--timeout SECONDS` (default 5), `--no-remote` (see IPv6 below), `--config FILE`, `--tcp-ports P1,P2` (overrides the config).
+
+### Config
+
+Optional settings live in `input/config.yaml` (git-ignored like the rest of `input/`, and never treated as a zone file):
+
+```yaml
+# Extra TCP ports probed on every IP, in addition to 80 and 443 (which are always probed)
+tcp_ports:
+  - 8080
+```
+
+Extra ports appear in the *TCP* column of the IP table, and an open extra port counts as "something answers" for the removal verdict.
 
 Each zone file `input/<name>` produces:
 

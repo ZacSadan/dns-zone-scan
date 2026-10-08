@@ -14,7 +14,7 @@ import sys
 import time
 from pathlib import Path
 
-from . import cloud, html_report, report
+from . import cloud, config, html_report, report
 from .scan import scan_zone
 
 STAMP_RE = re.compile(r"^(?P<base>.+)\.(?P<stamp>\d{8}_\d{4})\.json$")
@@ -23,10 +23,12 @@ STAMP_RE = re.compile(r"^(?P<base>.+)\.(?P<stamp>\d{8}_\d{4})\.json$")
 def zone_files(input_dir: Path, names: list[str]) -> list[Path]:
     if names:
         return [Path(n) if Path(n).exists() else input_dir / n for n in names]
-    return sorted(p for p in input_dir.iterdir() if p.is_file() and not p.name.startswith("."))
+    return sorted(p for p in input_dir.iterdir()
+                  if p.is_file() and not p.name.startswith(".") and not config.is_config_file(p))
 
 
-def do_scan(files: list[Path], out_dir: Path, workers: int, timeout: float, remote_ipv6: bool = True) -> list[Path]:
+def do_scan(files: list[Path], out_dir: Path, workers: int, timeout: float, remote_ipv6: bool = True,
+            tcp_ports: list[int] | None = None) -> list[Path]:
     out_dir.mkdir(exist_ok=True)
     print("Loading cloud provider IP ranges...", file=sys.stderr)
     cr = cloud.CloudRanges()
@@ -34,7 +36,8 @@ def do_scan(files: list[Path], out_dir: Path, workers: int, timeout: float, remo
     for f in files:
         t0 = time.monotonic()
         try:
-            data = scan_zone(f, workers=workers, timeout=timeout, cloud_ranges=cr, remote_ipv6=remote_ipv6)
+            data = scan_zone(f, workers=workers, timeout=timeout, cloud_ranges=cr, remote_ipv6=remote_ipv6,
+                             tcp_ports=tcp_ports)
         except Exception as e:  # noqa: BLE001
             print(f"ERROR scanning {f.name}: {type(e).__name__}: {e}", file=sys.stderr)
             continue
@@ -78,6 +81,8 @@ def main(argv=None) -> int:
     ap.add_argument("--timeout", default=5.0, type=float)
     ap.add_argument("--no-remote", action="store_true",
                     help="never use the Globalping network for IPv6 checks when this machine lacks IPv6")
+    ap.add_argument("--config", type=Path, help="settings file (default: <input>/config.yaml if present)")
+    ap.add_argument("--tcp-ports", help="extra TCP ports to probe besides 80/443, comma-separated (overrides config)")
     a = ap.parse_args(argv)
 
     if a.command == "report":
@@ -88,11 +93,19 @@ def main(argv=None) -> int:
         do_report(scans)
         return 0
 
+    try:
+        cfg = config.load_config(a.config or config.find_config(a.input))
+        if a.tcp_ports is not None:
+            cfg["tcp_ports"] = config.parse_ports([p for p in a.tcp_ports.split(",") if p.strip()])
+    except (OSError, ValueError) as e:
+        print(f"Config error: {e}", file=sys.stderr)
+        return 1
+
     files = zone_files(a.input, a.paths)
     if not files:
         print(f"No zone files found in {a.input}/", file=sys.stderr)
         return 1
-    scans = do_scan(files, a.output, a.workers, a.timeout, remote_ipv6=not a.no_remote)
+    scans = do_scan(files, a.output, a.workers, a.timeout, remote_ipv6=not a.no_remote, tcp_ports=cfg["tcp_ports"])
     if a.command == "all":
         do_report(scans)
     return 0 if len(scans) == len(files) else 2
